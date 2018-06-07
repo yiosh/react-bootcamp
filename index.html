@@ -18,7 +18,7 @@
           {props.list.map((name) => (
             <li key={name}>
               <span>{name}</span>
-              <button>Remove</button>
+              <button onClick={() => props.onRemoveFriend(name)}>Remove</button>
             </li>
           ))}
         </ul>
@@ -31,6 +31,7 @@
         this.state = {
           friends: ['Jordyn', 'Mikenzi', 'Jake']
         };
+        this.handleRemoveFriend = this.handleRemoveFriend.bind(this);
       };
 
       handleAddFriend() {
@@ -48,7 +49,10 @@
       render() {
         return (
           <div>
-            <FriendsList list={this.state.friends} onRemoveFriend={this.handleRemoveFriend} />
+            <FriendsList 
+              list={this.state.friends} 
+              onRemoveFriend={this.handleRemoveFriend} 
+            />
           </div>
         );
       };
