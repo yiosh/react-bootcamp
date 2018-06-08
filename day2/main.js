@@ -114,7 +114,6 @@ class App extends React.Component {
   }
 
   render() {
-    console.log(this.state.friends)
     return (
       <div>
         <input 
@@ -145,4 +144,4 @@ class App extends React.Component {
 ReactDOM.render(
   <App />,
   document.getElementById('app')
-)
+);
