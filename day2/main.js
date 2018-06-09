@@ -1,7 +1,37 @@
+class Loading extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      text: 'Loading'
+    }
+  }
+
+  componentDidMount() {
+    const stopper = this.state.text + '...';
+    this.interval = setInterval(() => {
+      this.state.text === stopper ? this.setState({text: 'Loading'}) 
+      :
+      this.setState((currentState) => {
+        return {
+          text: currentState.text + '.'
+        }
+      })
+    }, 300);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.interval);
+  }
+
+  render() {
+    return <p>{this.state.text}</p>
+  }
+}
+
 function ActiveFriendsList (props) {
   return (
     <div>
-      <h1>Active Friends</h1>
+      <h2>Active Friends</h2>
       <ul>
         {props.list.map((friend) => (
           <li key={friend.name}>
@@ -18,7 +48,7 @@ function ActiveFriendsList (props) {
 function InactiveFriendsList (props) {
   return (
     <div>
-      <h1>Inactive Friends</h1>
+      <h2>Inactive Friends</h2>
       <ul>
         {props.list.map((friend) => (
           <li key={friend.name}>
@@ -35,40 +65,37 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      friends: [
-        {
-          name: 'Jordyn',
-          active: true
-        },
-        {
-          name: 'Mikenzi',
-          active: true
-        },
-        {
-          name: 'Tiffany',
-          active: true
-        },
-        {
-          name: 'Jake',
-          active: false
-        }
-      ],
-      input: ''
+      friends: [],
+      input: '',
+      loading: true
     };
 
     this.handleRemoveFriend = this.handleRemoveFriend.bind(this);
     this.updateInput = this.updateInput.bind(this);
     this.handleAddFriend = this.handleAddFriend.bind(this);
     this.handleToggleFriend = this.handleToggleFriend.bind(this);
-    this.handleClearAll = this.handleClearAll.bind(this);
-  };
 
-  handleClearAll() {
-    this.setState((currentState) => {
-      return {
-        friends: []
-      }
-    });
+    console.log('--constructor--');
+  }
+
+  componentDidMount() {
+    console.log('--componentDidMount--');
+    API.fetchFriends()
+      .then((friends) => {
+        this.setState({
+          friends,
+          loading: false
+        })
+        console.log(friends);
+      })
+  }
+
+  componentDidUpdate() {
+    console.log('--componentDidUpdate--');
+  }
+
+  componentWillUnmount() {
+    console.log('--componentWillUnmount--');
   }
 
   updateInput(e) {
@@ -114,6 +141,11 @@ class App extends React.Component {
   }
 
   render() {
+    console.log('--render--');
+    if (this.state.loading === true) {
+      return <Loading />
+    }
+
     return (
       <div>
         <input 
@@ -124,7 +156,7 @@ class App extends React.Component {
         />
         
         <button onClick={this.handleAddFriend}>Submit</button>
-        <button onClick={this.handleClearAll}>Clear All</button>
+        <button onClick={() => this.setState({friends: []})}>Clear All</button>
 
         <ActiveFriendsList 
           list={this.state.friends.filter((friend) => friend.active === true)} 
